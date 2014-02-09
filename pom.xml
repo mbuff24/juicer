@@ -17,10 +17,15 @@
     <consumer.secret></consumer.secret>
     <access.token></access.token>
     <access.token.secret></access.token.secret>
+
+    <project.build.sourceencoding>UTF-8</project.build.sourceencoding>
+    <apache.mahout.version>0.9</apache.mahout.version>
   </properties>
 
   <!-- dependencies -->
   <dependencies>
+
+    <!-- twitter stream oauth api -->
     <dependency>
       <groupId>com.twitter</groupId>
       <artifactId>hbc-core</artifactId> <!-- or hbc-twitter4j -->
@@ -31,17 +36,45 @@
       <artifactId>slf4j-simple</artifactId>
       <version>1.7.2</version>
     </dependency>
+
+    <!-- json parser -->
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.2.4</version>
     </dependency>
+
+    <!-- twiiter nlp tools -->
+    <dependency>
+      <groupId>edu.cmu.cs</groupId>
+      <artifactId>ark-tweet-nlp</artifactId>
+      <version>0.3.2</version>
+    </dependency>
+    
+    <!-- mahout! -->
+    <dependency>
+      <groupId>org.apache.mahout</groupId>
+      <artifactId>mahout-core</artifactId>
+      <version>${apache.mahout.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.mahout</groupId>
+      <artifactId>mahout-math</artifactId>
+      <version>${apache.mahout.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.mahout</groupId>
+      <artifactId>mahout-integration</artifactId>
+      <version>${apache.mahout.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    
   </dependencies>
 
   <!-- build -->
