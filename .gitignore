@@ -4,3 +4,14 @@
 *.jar
 *.war
 *.ear
+
+.idea/
+*.iml
+*.log
+target/
+.settings
+.metadata/
+.cache
+.classpath
+.classpath.txt
+.project
