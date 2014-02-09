@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.juicer</groupId>
+  <artifactId>juicer</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>juicer</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <git.dir>./.git</git.dir>
+    <!-- this makes maven-tools not bump us to snapshot versions -->
+    <stabilized>true</stabilized>
+    <!-- Fill these in via https://dev.twitter.com/apps -->
+    <consumer.key></consumer.key>
+    <consumer.secret></consumer.secret>
+    <access.token></access.token>
+    <access.token.secret></access.token.secret>
+  </properties>
+
+  <!-- dependencies -->
+  <dependencies>
+    <dependency>
+      <groupId>com.twitter</groupId>
+      <artifactId>hbc-core</artifactId> <!-- or hbc-twitter4j -->
+      <version>1.4.2</version> <!-- or whatever the latest version is -->
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- build -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <configuration>
+          <mainClass>com.juicer.App</mainClass>
+          <arguments>
+            <argument>${consumer.key}</argument>
+            <argument>${consumer.secret}</argument>
+            <argument>${access.token}</argument>
+            <argument>${access.token.secret}</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
