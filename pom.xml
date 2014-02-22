@@ -50,6 +50,13 @@
       <artifactId>ark-tweet-nlp</artifactId>
       <version>0.3.2</version>
     </dependency>
+
+    <!-- MySQL (yes sorry, sadface) -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.29</version>
+    </dependency>
     
     <!-- mahout! -->
     <dependency>

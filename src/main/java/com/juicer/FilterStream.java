@@ -12,7 +12,8 @@
  **/
 package com.juicer;
 
-import com.google.common.collect.Lists;
+import com.juicer.data.DB;
+import com.juicer.data.Tweet;
 import com.twitter.hbc.ClientBuilder;
 import com.twitter.hbc.core.Client;
 import com.twitter.hbc.core.Constants;
@@ -21,51 +22,88 @@ import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class FilterStream {
 	
-	private ArrayList<Tweet> tweets;
+	private DB db;
+	private BlockingQueue<String> queue;
+	private StatusesFilterEndpoint endpoint;
+	private List<String> terms;
+	private List<String> langs;
+	private Client client;
 	
-	public FilterStream() {
-		tweets = new ArrayList<Tweet>();
+	public FilterStream(DB db) {
+		this.db = db;
+		queue = new LinkedBlockingQueue<String>(10000);
+		endpoint = new StatusesFilterEndpoint();
+		terms = new ArrayList<String>();
+		langs = new ArrayList<String>();
+		client = null;
+	}
+	
+	public List<String> getTerms() {
+		return terms;
 	}
 
-	public void oauth(String consumerKey, String consumerSecret, String token, String secret) throws InterruptedException {
-		BlockingQueue<String> queue = new LinkedBlockingQueue<String>(10000);
-		StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
+	public void setTerms(List<String> terms) {
+		this.terms = terms;
+	}
+
+	public void addTerm(String s) {
+		terms.add(s);
+	}
+	
+	public void addTerms(List<String> list) {
+		terms.addAll(list);
+	}
+	
+	public void addLanguage(String s) {
+		langs.add(s);
+	}
+
+	public void oauth(String consumerKey, String consumerSecret, String token, String secret) {
 		
 		// add some track terms
-		endpoint.trackTerms(Lists.newArrayList("@MTV", "@VH1"));
-
+		endpoint.trackTerms(terms);
+		endpoint.languages(langs);
+		
+		System.out.println(endpoint.getURI());
+		
 		Authentication auth = new OAuth1(consumerKey, consumerSecret, token, secret);
+		StringDelimitedProcessor sdp = new StringDelimitedProcessor(queue);
 
 		// Create a new BasicClient. By default gzip is enabled.
-		Client client = new ClientBuilder()
+		client = new ClientBuilder()
 		.hosts(Constants.STREAM_HOST)
 		.endpoint(endpoint)
 		.authentication(auth)
-		.processor(new StringDelimitedProcessor(queue))
+		.processor(sdp)
 		.build();
 
 		// Establish a connection
 		client.connect();
-
-		String msg;
+	}
+	
+	public void run() throws InterruptedException, SQLException {
+		String msg = "";
 		Tweet tweet;
-		// Do whatever needs to be done with messages
-		for (int msgRead = 0; msgRead < 5; msgRead++) {
+		
+		db.connect();
+		
+		for (;;) {
 			msg = queue.take();
-			System.out.println(msg);
 			tweet = new Tweet(msg);
 			tweet.parse();
-			tweets.add(tweet);
+			db.save(tweet);
 		}
-
+	}
+	
+	public void close() {
 		client.stop();
-		//do something more
-		System.out.println(tweets);
 	}
 }
