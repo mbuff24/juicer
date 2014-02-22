@@ -1,9 +1,33 @@
 juicer
 ==============
 
-Twitter stream and ORM Layer. 
+Twitter stream / ORM / Caching 
 
-To run the example stream, you must include your "consumerKey", "consumerSecret", "token", and "secret" as program args.
+To run (for now) you must have twitter oauth credentials and a mysql db
+
+Add a file name properties.json to the root of the project and fill in your credentials below. You must include at least one tracking term to filtering tweets.
+
+```
+{
+	"db": {
+		"url": "",
+		"user": "",
+		"pw": ""
+		
+	},
+	"twitter": {
+		"consumerKey": "",
+		"consumerSecret": "",
+		"token": "",
+		"secret": ""
+	},
+	"trackingTerms": [
+		"",
+		"",
+    ...
+	]
+}
+```
 
 ###Filter Stream
 
