@@ -1,107 +1,39 @@
 package com.juicer.data;
-import com.google.gson.*;
+import com.google.gson.annotations.SerializedName;
 
 public class Tweet {
-
-	private String json;
 	
-	//TODO
-	// don't store retweets
-	// maybe store retweet count
-	// If it is a retweeted status, store the original
-	// Maybe use coordinates property?
-
 	//root level properties
+	@SerializedName("created_at")
 	private String createdAt;
+
+	@SerializedName("id_str")
 	private String id;
+
 	private String text;
 	private String source;
-	private String geo;
+	private boolean retweeted;
 
-	//user level properties
-	private String userId;
-	private String userName;
-	private String screenName;
+	@SerializedName("retweet_count")
+	private int retweetCount;
+
+	@SerializedName("favorite_count")
+	private int favoriteCount;
+
+	private User user;
 	
-	private boolean isRT;
-
-	public Tweet(String json) {
-		this.json = json;
-	}
-
-	public void parse() {
-		JsonParser parser = new JsonParser();
-		JsonElement ele = parser.parse(json);
-
-		JsonObject root = ele.getAsJsonObject();
-		this.createdAt = getProperty(root, "created_at");
-		this.id = getProperty(root, "id_str");
-		this.text = getProperty(root, "text");
-		this.source = getProperty(root, "source");
-		
-		this.geo = getGeoProperty(root);
-
-		JsonObject user = root.get("user").getAsJsonObject();
-		this.userId = getProperty(user, "id_str");
-		this.userName = getProperty(user, "name");
-		this.screenName = getProperty(user, "screen_name");
-		
-		this.isRT = getPropertyAsBoolean(root, "retweeted");
-	}
-
-	private String getProperty(JsonObject obj, String member) {
-		JsonElement ele = obj.get(member);
-		if(!ele.isJsonNull()) {
-			return ele.getAsString();
-		}
-		return "";
-	}
+	private Coordinates coordinates;
 	
-	private String getGeoProperty(JsonObject obj) {
-		JsonElement ele = obj.get("geo");
-		if(!ele.isJsonNull()) {
-			obj = ele.getAsJsonObject();
-			String type = getProperty(obj, "type");
-			if(type.equalsIgnoreCase("point")) {
-				ele = obj.get("coordinates");
-				JsonArray arr = ele.getAsJsonArray();
-				double x = arr.get(0).getAsDouble();
-				double y = arr.get(1).getAsDouble();
-				return x+", "+y;
-			}	
-		}
-		return null;
-	}
-	
-	private boolean getPropertyAsBoolean(JsonObject obj, String member) {
-		JsonElement ele = obj.get(member);
-		if(!ele.isJsonNull()) {
-			return ele.getAsBoolean();
-		}
-		return false;
-	}
-	
-	private int getPropertyAsInt(JsonObject obj, String member) {
-		JsonElement ele = obj.get(member);
-		if(!ele.isJsonNull()) {
-			return ele.getAsInt();
-		}
-		return -1;
-	}
+	@SerializedName("retweeted_status")
+	private Tweet retweet;
 
-	public String getJson() {
-		return json;
-	}
-
-	public void setJson(String json) {
-		this.json = json;
-	}
+	public Tweet() {}
 
 	public String getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setTimestamp(String createdAt) {
+	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
 
@@ -129,44 +61,61 @@ public class Tweet {
 		this.source = source;
 	}
 
-	public String getGeo() {
-		return geo;
+	public boolean isRetweeted() {
+		return retweeted;
 	}
 
-	public void setGeo(String geo) {
-		this.geo = geo;
+	public void setRetweeted(boolean retweeted) {
+		this.retweeted = retweeted;
 	}
 
-	public String getUserId() {
-		return userId;
+	public int getRetweetCount() {
+		return retweetCount;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setRetweetCount(int retweetCount) {
+		this.retweetCount = retweetCount;
 	}
 
-	public String getUserName() {
-		return userName;
+	public int getFavoriteCount() {
+		return favoriteCount;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setFavoriteCount(int favoriteCount) {
+		this.favoriteCount = favoriteCount;
 	}
 
-	public String getScreenName() {
-		return screenName;
+	public User getUser() {
+		return user;
 	}
 
-	public void setScreenName(String screenName) {
-		this.screenName = screenName;
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	public Tweet getRetweet() {
+		return retweet;
+	}
+
+	public void setRetweet(Tweet retweet) {
+		this.retweet = retweet;
+	}
+
+	public Coordinates getCoordinates() {
+		return coordinates;
+	}
+
+	public void setCoordinates(Coordinates coordinates) {
+		this.coordinates = coordinates;
 	}
 
 	@Override
 	public String toString() {
-		return "Tweet [createdAt=" + createdAt + ", id="
-				+ id + ", text=" + text + ", source=" + source + ", geo=" + geo
-				+ ", userId=" + userId + ", userName=" + userName
-				+ ", screenName=" + screenName + "]";
+		return "Tweet [createdAt=" + createdAt + ", id=" + id + ", text="
+				+ text + ", source=" + source + ", retweeted=" + retweeted
+				+ ", retweetCount=" + retweetCount + ", favoriteCount="
+				+ favoriteCount + ", user=" + user + ", coordinates="
+				+ coordinates + ", retweet=" + retweet + "]";
 	}
 
 

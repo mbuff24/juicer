@@ -14,6 +14,7 @@ package com.juicer;
 
 import com.juicer.data.DB;
 import com.juicer.data.Tweet;
+import com.juicer.utils.Properties;
 import com.twitter.hbc.ClientBuilder;
 import com.twitter.hbc.core.Client;
 import com.twitter.hbc.core.Constants;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import com.google.gson.Gson;
 
 public class FilterStream {
 	
@@ -91,15 +94,15 @@ public class FilterStream {
 	
 	public void run() throws InterruptedException, SQLException {
 		String msg = "";
-		Tweet tweet;
+		Tweet t;
+		Gson gson = new Gson();
 		
 		db.connect();
 		
 		for (;;) {
 			msg = queue.take();
-			tweet = new Tweet(msg);
-			tweet.parse();
-			db.save(tweet);
+			t = gson.fromJson(msg, Tweet.class);
+			db.save(t);
 		}
 	}
 	
