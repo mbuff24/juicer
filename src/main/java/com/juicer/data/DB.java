@@ -19,6 +19,8 @@ public class DB {
     private String insertTweet = "INSERT INTO tweets"
     		+ "(id, created_at, text, source, geo, user_id, user_name, screen_name, followers_count, friends_count, statuses_count, verified, retweet_count, favorite_count) VALUES"
     		+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    
+    private String exists = "SELECT COUNT(*) FROM tweets WHERE ID = ?";
 	
 	public DB(String url, String user, String pw) {
 		this.url = url;
@@ -31,17 +33,34 @@ public class DB {
 		con = DriverManager.getConnection(url, user, password);
 	}
 	
+	public boolean exists(String id) {
+		PreparedStatement ps;
+		try {
+			ps = con.prepareStatement(exists);
+			ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			int exists = rs.getInt("COUNT(*)");
+			if(exists == 1) {
+				return true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
 	public void save(Tweet t) {
 		try {
-			PreparedStatement ps = con.prepareStatement(insertTweet);
 			
 			//store the original tweet if it's a retweet
 			if(t.getRetweet() != null) {
 				t = t.getRetweet();
 			}
-			
-			System.out.println("Saving: "+ t.toString());
-			
+						
+			PreparedStatement ps = con.prepareStatement(insertTweet);
 			User u = t.getUser();
 			
 			Coordinates c = t.getCoordinates();
@@ -64,12 +83,12 @@ public class DB {
 			ps.setBoolean(12, u.getVerified());
 			ps.setInt(13, t.getRetweetCount());
 			ps.setInt(14, t.getFavoriteCount());
-			
 			ps.executeUpdate();
+			System.out.println("Saved: "+ t.toString());
 			
 		} catch (SQLException e) {
+			System.out.println(e);
 			System.out.println("Failed to add: " + t.toString());
-			e.printStackTrace();
 		}
 		
 	}
